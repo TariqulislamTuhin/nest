@@ -14,7 +14,7 @@ import { User } from './user/entities/user.entity';
       database: 'nest_api_test',
       entities: [User],
       synchronize: true,
-      dropSchema: true,
+      // dropSchema: true,
     }),
     UserModule,
   ],

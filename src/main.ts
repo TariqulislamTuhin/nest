@@ -10,7 +10,7 @@ async function bootstrap() {
     .setTitle('Nest Test API')
     .setDescription('This is a test api in nestJS')
     .setVersion('1.0.0')
-    .addTag('cats')
+    .addTag('NestJS Test API')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
