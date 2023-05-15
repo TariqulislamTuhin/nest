@@ -15,19 +15,25 @@ export class UserService {
     private usersRepository: Repository<User>,
   ) { }
   async create(createUserDto: CreateUserDto) {
-    const userExists = await this.usersRepository.findOne({
-      where: [
-        { email: createUserDto.email },
-        { username: createUserDto.username },
-      ],
-    });
-    if (userExists)
-      throw new HttpException(
-        Constant.USER_ALREADY_EXISTS,
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    createUserDto.password = await this.hashPassword(createUserDto.password);
-    return await this.usersRepository.save(createUserDto);
+    try {
+      const userExists = await this.usersRepository.findOne({
+        where: [
+          { email: createUserDto.email },
+          { username: createUserDto.username },
+        ],
+      });
+      if (userExists)
+        throw new HttpException(
+          Constant.USER_ALREADY_EXISTS,
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      const { password } = createUserDto;
+      createUserDto.password = await this.hashPassword(password);
+      return await this.usersRepository.save(createUserDto);
+    } catch (error) {
+      console.log(error.status);
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   async findAll(): Promise<User[]> {
@@ -71,6 +77,7 @@ export class UserService {
 
   async hashPassword(password: string) {
     const salt = await genSalt();
+    console.log(password, salt);
     return await hash(password, salt);
   }
   async verifyPassword() { }
