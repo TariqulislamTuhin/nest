@@ -1,19 +1,19 @@
-import { genSalt, hash, compare } from 'bcrypt';
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { compare, genSalt, hash } from 'bcrypt';
 import { Constant } from 'src/utils/constamts';
+import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) { }
+  ) {}
   async create(createUserDto: CreateUserDto) {
     try {
       const userExists = await this.usersRepository.findOne({
@@ -29,7 +29,16 @@ export class UserService {
         );
       const { password } = createUserDto;
       createUserDto.password = await this.hashPassword(password);
-      return await this.usersRepository.save(createUserDto);
+      const { id, firstName, lastName, email, username, createdAt } =
+        await this.usersRepository.save(createUserDto);
+      return {
+        id,
+        firstName,
+        lastName,
+        email,
+        username,
+        createdAt,
+      };
     } catch (error) {
       console.log(error.status);
       throw new HttpException(error.message, error.status);
@@ -80,5 +89,5 @@ export class UserService {
     console.log(password, salt);
     return await hash(password, salt);
   }
-  async verifyPassword() { }
+  async verifyPassword() {}
 }

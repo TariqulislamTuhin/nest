@@ -4,13 +4,12 @@ import {
   HttpCode,
   HttpException,
   HttpStatus,
-  Post,
-  Res,
+  Post
 } from '@nestjs/common';
 import { Constant } from 'src/utils/constamts';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserService } from './user.service';
 import { LoginUserDto } from './dto/login-user.dto';
+import { UserService } from './user.service';
 
 @Controller()
 export class AuthController {
